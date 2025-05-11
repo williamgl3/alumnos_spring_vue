@@ -1,6 +1,6 @@
 <script setup>
 import { ref, onMounted} from "vue";
-import axios from 'axios';
+import axios from "axios";
 
 const alumnos = ref([]);
 
@@ -18,8 +18,6 @@ const cargarAlumnos = async () => {
   console.log(alumnos.value);
 }
 
-onMounted(cargarAlumnos);
-
 const agregarAlumno = async () =>{
   await axios.post('http://localhost:8080/alumnos/insertar-alumnos', nuevoAlumno.value)
   await cargarAlumnos();
@@ -31,6 +29,15 @@ const agregarAlumno = async () =>{
   imagenURL:''
   };
 }
+
+const eliminarAlumno = async (id) => {
+  await axios.delete(`http://localhost:8080/alumnos/eliminar-alumnos/${id}`)
+  console.log('Alumno eliminado con id', id);
+  await cargarAlumnos();
+}
+
+onMounted(cargarAlumnos);
+
 
 </script>
 
@@ -95,7 +102,9 @@ const agregarAlumno = async () =>{
       <td>{{ alumno.telefono }}</td>
       <td><img :src="alumno.imagenURL" alt="Imagen del alumno" width="50"></td>
       <td>
-        <button class="btn btn-danger mx-2"><i class="bi bi-trash3-fill"></i></button>
+        <button @click="eliminarAlumno(alumno.id)" class="btn btn-danger mx-2">
+    <i class="bi bi-trash"></i> Borrar
+  </button>
         <button class="btn btn-warning"><i class="bi bi-pencil-fill"></i></button>
       </td>
     </tr>

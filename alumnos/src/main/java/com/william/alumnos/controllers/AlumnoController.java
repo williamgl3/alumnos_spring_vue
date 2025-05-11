@@ -18,7 +18,7 @@ import com.william.alumnos.model.Alumno;
 import com.william.alumnos.repository.AlumnoRepository;
 
 @RestController
-@CrossOrigin(origins= "*")
+@CrossOrigin(origins = "*") 
 @RequestMapping ("/alumnos")
 
 public class AlumnoController {
