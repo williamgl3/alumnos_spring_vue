@@ -12,6 +12,8 @@ const nuevoAlumno = ref({
   imagenURL:''
 });
 
+const editado= ref(false);
+
 const cargarAlumnos = async () => {
   const response = await axios.get('http://localhost:8080/alumnos/traer-alumnos')
   alumnos.value = response.data;
@@ -19,7 +21,13 @@ const cargarAlumnos = async () => {
 }
 
 const agregarAlumno = async () =>{
-  await axios.post('http://localhost:8080/alumnos/insertar-alumnos', nuevoAlumno.value)
+  if (editado.value){
+     await axios.put(`http://localhost:8080/alumnos/editar-alumnos/${nuevoAlumno.value.id}`, nuevoAlumno.value);
+     editado.value = false
+  }else{
+     await axios.post('http://localhost:8080/alumnos/insertar-alumnos', nuevoAlumno.value)
+  }
+ 
   await cargarAlumnos();
   nuevoAlumno.value = {
   nombre: '',
@@ -28,6 +36,11 @@ const agregarAlumno = async () =>{
   telefono:'',
   imagenURL:''
   };
+}
+
+const editarAlumnos =(alumno) => {
+  Object.assign(nuevoAlumno.value, alumno);
+  editado.value = true
 }
 
 const eliminarAlumno = async (id) => {
@@ -71,17 +84,17 @@ onMounted(cargarAlumnos);
             </div>
             </div>
 
-            <button type="submit" class="btn btn-primary">Agregar Alumno</button>
+            <button type="submit" class="btn btn-primary">
+              {{ editado ? 'Actualizar Alumno' : 'Agregar Alumno' }}
+            </button>
           </form>
 
         </div>
 
       </div>
       <div class="col-md-12">
-        <div class="card shadow">
-          <div class="card-body">
-            <h5 class="card-title mb-3">Tabla de Alumnos</h5>
-             <table class="table table-hover align-middle">
+            <h2>Tabla de Alumnos</h2>
+             <table class="table">
   <thead>
     <tr>
       <th scope="col">Id</th>
@@ -105,19 +118,17 @@ onMounted(cargarAlumnos);
         <button @click="eliminarAlumno(alumno.id)" class="btn btn-danger mx-2">
     <i class="bi bi-trash"></i> Borrar
   </button>
-        <button class="btn btn-warning"><i class="bi bi-pencil-fill"></i></button>
+        <button @click="editarAlumnos(alumno)" class="btn btn-warning"><i class="bi bi-pencil-fill"></i></button>
       </td>
     </tr>
   </tbody>
 </table>
-          </div>
-        </div>
+</div>
+
+</div>
        
    
-      </div>
-    </div>
-    
-  </div>
+</div>
   
 </template>
 
